@@ -22,8 +22,7 @@ def get_content_by_twitter_id_list(twitter_id_list, bearer_token):
     param = {"ids": ",".join(twitter_id_list),
              "expansions": ["author_id"],
              "tweet.fields": ["created_at"]}
-    headers = {
-        "Authorization": f"Bearer {bearer_token}"}
+    headers = {"Authorization": f"Bearer {bearer_token}"}
     response = requests.get(end_point, headers=headers, params=param, )
     return response.json()
 
@@ -49,14 +48,18 @@ def get_twitter_conversations(file):
     return eids, labels, twitter_ids
 
 
-def get_twitter_from_dir(dir):
+def get_twitter_from_dir(dir, max=None):
     files = list(Path(dir).glob("*.csv"))
+    if max is None:
+        max = len(files) + 1
     eids = []
     dfs = []
-    for f in files:
+    for i, f in enumerate(files):
         # df = df.reindex(sorted(df.columns), axis=1)
         eids.append(f.stem)
         dfs.append(pd.read_csv(f))
+        if i == max:
+            break
     return eids, dfs
 
 
